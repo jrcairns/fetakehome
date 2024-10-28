@@ -25,8 +25,16 @@ import {
     FruitExplorerContent,
     FruitExplorerGroup,
     FruitExplorerItem,
+    FruitNutritionChart,
 } from "@/components/fruit-explorer";
 import { Fruit } from "@/types/fruit";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 type GroupBy = "None" | "Family" | "Order" | "Genus";
 
@@ -98,7 +106,21 @@ export function FruitContainer({ initialFruits }: FruitContainerProps) {
                         <TableBody>
                             {initialFruits.map((fruit) => (
                                 <TableRow key={fruit.id}>
-                                    <TableCell>{fruit.name}</TableCell>
+                                    <TableCell>
+                                        <TooltipProvider>
+                                            <Tooltip delayDuration={0}>
+                                                <TooltipTrigger asChild>
+                                                    <span className="flex items-center gap-1.5 font-medium cursor-help">
+                                                        {fruit.name}
+                                                        <Info className="h-3 w-3 text-muted-foreground" />
+                                                    </span>
+                                                </TooltipTrigger>
+                                                <TooltipContent side="right" sideOffset={5} className="p-4 bg-popover border text-foreground">
+                                                    <FruitNutritionChart fruit={fruit} />
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </TableCell>
                                     <TableCell>{fruit.family}</TableCell>
                                     <TableCell>{fruit.order}</TableCell>
                                     <TableCell>{fruit.genus}</TableCell>

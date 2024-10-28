@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Fruit } from "@/types/fruit";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import {
     Tooltip,
     TooltipContent,
@@ -189,8 +189,9 @@ function FruitExplorerItem({
             <TooltipProvider>
                 <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                        <span className="cursor-help">
+                        <span className="flex items-center gap-1.5 cursor-help">
                             {fruit.name} ({fruit.nutritions.calories} cal)
+                            <Info className="h-3.5 w-3.5 text-muted-foreground" />
                         </span>
                     </TooltipTrigger>
                     <TooltipContent side="right" sideOffset={5} className="p-4 bg-popover border text-foreground">
@@ -229,4 +230,5 @@ export {
     FruitExplorerGroup,
     FruitExplorerItem,
     FruitExplorerTable,
+    FruitNutritionChart,
 }; 
