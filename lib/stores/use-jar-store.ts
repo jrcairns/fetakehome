@@ -11,7 +11,8 @@ interface JarActions {
     setIsLoading: (state: boolean) => void;
     addFruit: (fruit: Fruit) => void;
     removeFruit: (fruitId: number) => void;
-    updateQuantity: (fruitId: number, quantity: number) => void;
+    incrementQuantity: (fruit: Fruit) => void;
+    decrementQuantity: (fruitId: number) => void;
     addGroupToJar: (fruits: Fruit[]) => void;
     clearJar: () => void;
     getTotalCalories: () => number;
@@ -23,72 +24,43 @@ type JarStore = JarState & JarActions;
 export const useJarStore = create<JarStore>()(
     persist(
         (set, get) => ({
-            // Initial state
+            // State
             fruits: [],
             isLoading: true,
 
-            // Loading state
+            // Actions
             setIsLoading: (state) => set({ isLoading: state }),
 
-            // Basic operations
-            addFruit: (fruit) =>
-                set((state) => ({
-                    fruits: [...state.fruits, fruit]
-                })),
+            addFruit: (fruit) => set((state) => ({
+                fruits: [...state.fruits, fruit]
+            })),
 
-            removeFruit: (fruitId) =>
-                set((state) => ({
-                    fruits: state.fruits.filter(f => f.id !== fruitId)
-                })),
+            removeFruit: (fruitId) => set((state) => ({
+                fruits: state.fruits.filter(f => f.id !== fruitId)
+            })),
 
-            // Bulk operations
-            addGroupToJar: (fruits) =>
-                set((state) => ({
-                    fruits: [...state.fruits, ...fruits]
-                })),
+            incrementQuantity: (fruit) => set((state) => ({
+                fruits: [...state.fruits, fruit]
+            })),
 
-            // Quantity management
-            updateQuantity: (fruitId, quantity) =>
-                set((state) => {
-                    const fruit = state.fruits.find(f => f.id === fruitId);
-                    if (!fruit) return state;
+            decrementQuantity: (fruitId) => set((state) => {
+                const fruits = [...state.fruits];
+                const index = fruits.findLastIndex(f => f.id === fruitId);
+                if (index !== -1) {
+                    fruits.splice(index, 1);
+                }
+                return { fruits };
+            }),
 
-                    const currentQuantity = get().getFruitQuantity(fruitId);
+            addGroupToJar: (fruits) => set((state) => ({
+                fruits: [...state.fruits, ...fruits]
+            })),
 
-                    if (quantity === 0) {
-                        return {
-                            fruits: state.fruits.filter(f => f.id !== fruitId)
-                        };
-                    }
-
-                    if (quantity > currentQuantity) {
-                        const toAdd = quantity - currentQuantity;
-                        return {
-                            fruits: [...state.fruits, ...Array(toAdd).fill(fruit)]
-                        };
-                    }
-
-                    const toRemove = currentQuantity - quantity;
-                    let removed = 0;
-                    return {
-                        fruits: state.fruits.filter(f => {
-                            if (f.id === fruitId && removed < toRemove) {
-                                removed++;
-                                return false;
-                            }
-                            return true;
-                        })
-                    };
-                }),
-
-            // Clear all fruits
             clearJar: () => set({ fruits: [] }),
 
-            // Calculations and queries
-            getTotalCalories: () =>
-                get().fruits.reduce((total, fruit) =>
-                    total + fruit.nutritions.calories, 0
-                ),
+            getTotalCalories: () => get().fruits.reduce((total, fruit) =>
+                total + fruit.nutritions.calories, 0
+            ),
 
             getFruitQuantity: (fruitId) =>
                 get().fruits.filter(f => f.id === fruitId).length,

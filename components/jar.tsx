@@ -100,8 +100,9 @@ interface JarListProps {
 
 function JarList({ fruits }: JarListProps) {
     const { groupedFruits } = useFruitChart(fruits);
+    const incrementQuantity = useJarStore(state => state.incrementQuantity);
+    const decrementQuantity = useJarStore(state => state.decrementQuantity);
     const removeFruit = useJarStore(state => state.removeFruit);
-    const updateQuantity = useJarStore(state => state.updateQuantity);
 
     return (
         <ScrollArea className="h-full">
@@ -125,24 +126,21 @@ function JarList({ fruits }: JarListProps) {
                                     variant="outline"
                                     size="icon"
                                     className="h-7 w-7 rounded-r-none"
-                                    onClick={() => updateQuantity(fruit.id, Math.max(0, quantity - 1))}
+                                    onClick={() => decrementQuantity(fruit.id)}
                                 >
                                     <Minus className="h-3 w-3" />
                                 </Button>
                                 <Input
                                     type="number"
                                     value={quantity}
-                                    onChange={(e) => {
-                                        const value = parseInt(e.target.value) || 0;
-                                        updateQuantity(fruit.id, Math.max(0, value));
-                                    }}
+                                    readOnly
                                     className="h-7 w-14 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                                 <Button
                                     variant="outline"
                                     size="icon"
                                     className="h-7 w-7 rounded-l-none"
-                                    onClick={() => updateQuantity(fruit.id, quantity + 1)}
+                                    onClick={() => incrementQuantity(fruit)}
                                 >
                                     <Plus className="h-3 w-3" />
                                 </Button>
