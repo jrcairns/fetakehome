@@ -17,14 +17,12 @@ async function getFruits(): Promise<Fruit[]> {
 }
 
 export default async function Home() {
-  const fruits = await getFruits();
-
   return (
     <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
-          <Suspense>
-            <FruitContainer initialFruits={fruits} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Fruits />
           </Suspense>
           <div className="lg:sticky lg:top-8 h-[calc(100vh-150px)]">
             <JarContainer />
@@ -33,4 +31,9 @@ export default async function Home() {
       </div>
     </main>
   );
+}
+
+async function Fruits() {
+  const fruits = await getFruits();
+  return <FruitContainer initialFruits={fruits} />;
 }
